@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TeduCoreApp.Data.EF.Migrations
 {
-    public partial class inintial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -683,12 +683,6 @@ namespace TeduCoreApp.Data.EF.Migrations
                         principalTable: "Announcements",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AnnouncementUsers_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -795,7 +789,7 @@ namespace TeduCoreApp.Data.EF.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    TagId = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    TagId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -855,11 +849,6 @@ namespace TeduCoreApp.Data.EF.Migrations
                 name: "IX_AnnouncementUsers_AnnouncementId",
                 table: "AnnouncementUsers",
                 column: "AnnouncementId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AnnouncementUsers_UserId",
-                table: "AnnouncementUsers",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

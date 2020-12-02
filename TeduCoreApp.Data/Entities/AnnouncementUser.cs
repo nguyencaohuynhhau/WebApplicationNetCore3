@@ -14,7 +14,6 @@ namespace TeduCoreApp.Data.Entities
         [Required]
         public string AnnouncementId { get; set; }
 
-        [Required]
         public Guid UserId { get; set; }
 
         public bool? HasRead { get; set; }

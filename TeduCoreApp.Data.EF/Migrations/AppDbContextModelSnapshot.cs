@@ -288,8 +288,6 @@ namespace TeduCoreApp.Data.EF.Migrations
 
                     b.HasIndex("AnnouncementId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("AnnouncementUsers");
                 });
 
@@ -867,8 +865,8 @@ namespace TeduCoreApp.Data.EF.Migrations
 
                     b.Property<string>("TagId")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
@@ -1065,11 +1063,6 @@ namespace TeduCoreApp.Data.EF.Migrations
                     b.HasOne("TeduCoreApp.Data.Entities.Announcement", "Announcement")
                         .WithMany("AnnouncementUsers")
                         .HasForeignKey("AnnouncementId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("TeduCoreApp.Data.Entities.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
