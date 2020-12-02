@@ -14,9 +14,9 @@ using TeduCoreApp.Services;
 using TeduCoreApp.Data.EF;
 using TeduCoreApp.Data.Entities;
 using AutoMapper;
-using TeduCoreApp.Data.IRepositories;
 using TeduCoreApp.Application.Interfaces;
 using TeduCoreApp.Data.EF.Repositories;
+using TeduCoreApp.Data.IRepositories;
 using TeduCoreApp.Application.Implementation;
 
 namespace TeduCoreApp
@@ -34,15 +34,12 @@ namespace TeduCoreApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),s=>s.MigrationsAssembly("TeduCoreApp.Data.EF")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                o=>o.MigrationsAssembly("TeduCoreApp.Data.EF")));
 
             services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-
-            // Add application services.
-            services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
-            services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
 
             // Configure Identity
             services.Configure<IdentityOptions>(options =>
@@ -62,20 +59,27 @@ namespace TeduCoreApp
                 options.User.RequireUniqueEmail = true;
             });
 
-
             services.AddAutoMapper();
+            // Add application services.
+            services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
+            services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
+
             services.AddSingleton(Mapper.Configuration);
-            services.AddScoped<IMapper>(d => new Mapper(d.GetRequiredService<AutoMapper.IConfigurationProvider>(), d.GetService));
-            
+            services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
+
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
-            services.AddTransient<IProductCategoryService, ProductCategoryService>();
+
             services.AddTransient<DbInitializer>();
+
+            services.AddTransient<IProductCategoryRepository,ProductCategoryRepository>();
+
+            services.AddTransient<IProductCategoryService, ProductCategoryService>();
+
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -97,8 +101,11 @@ namespace TeduCoreApp
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(name: "areaRoute",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
-            //dbInitializer.Seed().Wait();
+          
         }
     }
 }

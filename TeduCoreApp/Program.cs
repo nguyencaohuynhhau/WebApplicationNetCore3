@@ -16,8 +16,8 @@ namespace TeduCoreApp
     {
         public static void Main(string[] args)
         {
-          var host =   BuildWebHost(args);
-            using (var scope = host.Services.CreateScope())
+            var host =  BuildWebHost(args);
+            using(var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
 
@@ -26,12 +26,11 @@ namespace TeduCoreApp
                     var dbInitializer = services.GetService<DbInitializer>();
                     dbInitializer.Seed().Wait();
                 }
-                catch (Exception ex){ 
-
+                catch (Exception ex)
+                {
                     var logger = services.GetService<ILogger<Program>>();
-                    logger.LogError(ex, "Has an error");
+                    logger.LogError(ex, "An error occurred while seeding the database");
                 }
-              
             }
             host.Run();
         }
