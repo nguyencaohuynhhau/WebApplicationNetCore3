@@ -44,10 +44,30 @@ namespace TeduCoreApp
             services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
             services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
 
+            // Configure Identity
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+            });
+
+
+            services.AddAutoMapper();
             services.AddSingleton(Mapper.Configuration);
             services.AddScoped<IMapper>(d => new Mapper(d.GetRequiredService<AutoMapper.IConfigurationProvider>(), d.GetService));
+            
             services.AddTransient<IEmailSender, EmailSender>();
-
             services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
             services.AddTransient<IProductCategoryService, ProductCategoryService>();
             services.AddTransient<DbInitializer>();
