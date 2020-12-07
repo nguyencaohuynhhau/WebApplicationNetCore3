@@ -2,29 +2,47 @@
     this.initialize = function () {
         registerEvents();
     }
+
     var registerEvents = function () {
+        $('#frmLogin').validate({
+            errorClass: 'red',
+            ignore: [],
+            lang: 'en',
+            rules: {
+                userName: {
+                    required: true
+                },
+                password: {
+                    required: true
+                }
+            }
+        });
         $('#btnLogin').on('click', function (e) {
-            e.preventDefault();
-            var user = $('#txtUserName').val();
-            var password = $('#txtPassword').val();
-            login(user, password);
+            if ($('#frmLogin').valid()) {
+                e.preventDefault();
+                var user = $('#txtUserName').val();
+                var password = $('#txtPassword').val();
+                login(user, password);
+            }
+           
         });
     }
+
     var login = function (user, pass) {
         $.ajax({
             type: 'POST',
             data: {
-                userName: user,
-                passWord: pass,
+                UserName: user,
+                Password: pass
             },
-            dataType: 'json',
+            dateType: 'json',
             url: '/admin/login/authen',
             success: function (res) {
                 if (res.Success) {
-                    window.location.href = "/Admin/Home/Index"
+                    window.location.href = "/Admin/Home/Index";
                 }
                 else {
-                    tedu.notify('Đăng nhập không đúng', 'error');  
+                    tedu.notify('Login failed', 'error');
                 }
             }
         })

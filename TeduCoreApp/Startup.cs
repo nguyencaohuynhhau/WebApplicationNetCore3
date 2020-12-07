@@ -20,6 +20,7 @@ using TeduCoreApp.Data.IRepositories;
 using TeduCoreApp.Application.Implementation;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
+using TeduCoreApp.Helpers;
 
 namespace TeduCoreApp
 {
@@ -73,11 +74,16 @@ namespace TeduCoreApp
 
             services.AddTransient<DbInitializer>();
 
-            services.AddTransient<IProductCategoryRepository,ProductCategoryRepository>();
-
-            services.AddTransient<IProductCategoryService, ProductCategoryService>();
-
+            services.AddScoped<IUserClaimsPrincipalFactory<AppUser>,CustomClaimsPrincipalFactory>();
             services.AddMvc().AddJsonOptions(s=>s.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+            // Repository
+            services.AddTransient<IProductCategoryRepository,ProductCategoryRepository>();
+            services.AddTransient<IFunctionRepository, FunctionRepository>();
+            // Service
+            services.AddTransient<IProductCategoryService, ProductCategoryService>();
+            services.AddTransient<IFunctionService, FunctionService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,7 +112,7 @@ namespace TeduCoreApp
                     template: "{controller=Home}/{action=Index}/{id?}");
 
                 routes.MapRoute(name: "areaRoute",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                    template: "{area:exists}/{controller=Login}/{action=Index}/{id?}");
             });
           
         }

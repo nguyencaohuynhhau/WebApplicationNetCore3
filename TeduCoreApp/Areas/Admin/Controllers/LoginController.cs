@@ -9,6 +9,7 @@ using TeduCoreApp.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using TeduCoreApp.Utilities.Dtos;
+using TeduCoreApp.Extensions;
 
 namespace TeduCoreApp.Areas.Admin.Controllers
 {
@@ -29,6 +30,7 @@ namespace TeduCoreApp.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
+            var email = User.GetSpecificClaim("Email");
             return View();
         }
 
