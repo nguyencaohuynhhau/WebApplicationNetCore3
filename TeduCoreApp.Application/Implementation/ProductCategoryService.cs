@@ -7,6 +7,7 @@ using System.Text;
 using TeduCoreApp.Application.Interfaces;
 using TeduCoreApp.Application.ViewModels.Product;
 using TeduCoreApp.Data.Entities;
+using TeduCoreApp.Data.Enums;
 using TeduCoreApp.Data.IRepositories;
 using TeduCoreApp.Infrastructure.Interfaces;
 
@@ -17,16 +18,19 @@ namespace TeduCoreApp.Application.Implementation
         private IProductCategoryRepository _productCategoryRepository;
         private IUnitOfWork _unitOfWork;
 
-        public ProductCategoryService(IProductCategoryRepository productCategoryRepository, IUnitOfWork unitOfWork)
+        public ProductCategoryService(IProductCategoryRepository productCategoryRepository,
+            IUnitOfWork unitOfWork)
         {
             _productCategoryRepository = productCategoryRepository;
             _unitOfWork = unitOfWork;
         }
+
         public ProductCategoryViewModel Add(ProductCategoryViewModel productCategoryVm)
         {
             var productCategory = Mapper.Map<ProductCategoryViewModel, ProductCategory>(productCategoryVm);
             _productCategoryRepository.Add(productCategory);
             return productCategoryVm;
+
         }
 
         public void Delete(int id)
@@ -36,7 +40,7 @@ namespace TeduCoreApp.Application.Implementation
 
         public List<ProductCategoryViewModel> GetAll()
         {
-            return _productCategoryRepository.FindAll().OrderBy(d => d.ParentId)
+            return _productCategoryRepository.FindAll().OrderBy(x => x.ParentId)
                  .ProjectTo<ProductCategoryViewModel>().ToList();
         }
 
@@ -54,7 +58,10 @@ namespace TeduCoreApp.Application.Implementation
 
         public List<ProductCategoryViewModel> GetAllByParentId(int parentId)
         {
-            throw new NotImplementedException();
+            return _productCategoryRepository.FindAll(x => x.Status == Status.Active
+            && x.ParentId == parentId)
+             .ProjectTo<ProductCategoryViewModel>()
+             .ToList();
         }
 
         public ProductCategoryViewModel GetById(int id)
@@ -83,7 +90,14 @@ namespace TeduCoreApp.Application.Implementation
 
         public void ReOrder(int sourceId, int targetId)
         {
-            throw new NotImplementedException();
+            var source = _productCategoryRepository.FindById(sourceId);
+            var target = _productCategoryRepository.FindById(targetId);
+            int tempOrder = source.SortOrder;
+            source.SortOrder = target.SortOrder;
+            target.SortOrder = tempOrder;
+
+            _productCategoryRepository.Update(source);
+            _productCategoryRepository.Update(target);
         }
 
         public void Save()
@@ -93,12 +107,23 @@ namespace TeduCoreApp.Application.Implementation
 
         public void Update(ProductCategoryViewModel productCategoryVm)
         {
-            throw new NotImplementedException();
+            var productCategory = Mapper.Map<ProductCategoryViewModel, ProductCategory>(productCategoryVm);
+            _productCategoryRepository.Update(productCategory);
         }
 
         public void UpdateParentId(int sourceId, int targetId, Dictionary<int, int> items)
         {
-            throw new NotImplementedException();
+            var sourceCategory = _productCategoryRepository.FindById(sourceId);
+            sourceCategory.ParentId = targetId;
+            _productCategoryRepository.Update(sourceCategory);
+
+            //Get all sibling
+            var sibling = _productCategoryRepository.FindAll(x => items.ContainsKey(x.Id));
+            foreach(var child in sibling)
+            {
+                child.SortOrder = items[child.Id];
+                _productCategoryRepository.Update(child);
+            }
         }
     }
 }

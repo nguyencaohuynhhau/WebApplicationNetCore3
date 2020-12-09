@@ -1,0 +1,3 @@
+2020-12-08T09:47:43.4518189+07:00 0HM4R4DAQBCBP:00000009 [WRN] The LINQ expression '"where __items_0.ContainsKey([d].Id)"' could not be translated and will be evaluated locally. (011792c6)
+2020-12-08T09:59:00.4223560+07:00 0HM4R4KJ5EDAU:00000003 [WRN] The LINQ expression '"where __items_0.ContainsKey([d].Id)"' could not be translated and will be evaluated locally. (011792c6)
+2020-12-08T10:07:21.4685496+07:00  [WRN] Heartbeat took longer than "00:00:01" at "12/08/2020 03:07:21 +00:00". (439152bf)

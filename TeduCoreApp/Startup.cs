@@ -21,6 +21,7 @@ using TeduCoreApp.Application.Implementation;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using TeduCoreApp.Helpers;
+using TeduCoreApp.Infrastructure.Interfaces;
 
 namespace TeduCoreApp
 {
@@ -71,11 +72,13 @@ namespace TeduCoreApp
             services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
 
             services.AddTransient<IEmailSender, EmailSender>();
-
             services.AddTransient<DbInitializer>();
 
             services.AddScoped<IUserClaimsPrincipalFactory<AppUser>,CustomClaimsPrincipalFactory>();
             services.AddMvc().AddJsonOptions(s=>s.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+            services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
+            services.AddTransient(typeof(IRepository<,>), typeof(EFRepository<,>));
 
             // Repository
             services.AddTransient<IProductCategoryRepository,ProductCategoryRepository>();
